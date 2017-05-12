@@ -74,7 +74,11 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoGenerateColumns = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.jobIdDataGridViewTextBoxColumn,
@@ -91,7 +95,6 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.Size = new System.Drawing.Size(848, 150);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.dataGridView1.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView1_DefaultValuesNeeded);
             // 
             // jobIdDataGridViewTextBoxColumn
@@ -100,6 +103,7 @@
             this.jobIdDataGridViewTextBoxColumn.HeaderText = "JobId";
             this.jobIdDataGridViewTextBoxColumn.Name = "jobIdDataGridViewTextBoxColumn";
             this.jobIdDataGridViewTextBoxColumn.ReadOnly = true;
+            this.jobIdDataGridViewTextBoxColumn.Width = 58;
             // 
             // jobNameDataGridViewTextBoxColumn
             // 
@@ -107,6 +111,7 @@
             this.jobNameDataGridViewTextBoxColumn.HeaderText = "JobName";
             this.jobNameDataGridViewTextBoxColumn.Name = "jobNameDataGridViewTextBoxColumn";
             this.jobNameDataGridViewTextBoxColumn.ReadOnly = true;
+            this.jobNameDataGridViewTextBoxColumn.Width = 77;
             // 
             // jobGroupDataGridViewTextBoxColumn
             // 
@@ -114,6 +119,7 @@
             this.jobGroupDataGridViewTextBoxColumn.HeaderText = "JobGroup";
             this.jobGroupDataGridViewTextBoxColumn.Name = "jobGroupDataGridViewTextBoxColumn";
             this.jobGroupDataGridViewTextBoxColumn.ReadOnly = true;
+            this.jobGroupDataGridViewTextBoxColumn.Width = 78;
             // 
             // processDataGridViewTextBoxColumn
             // 
@@ -121,6 +127,7 @@
             this.processDataGridViewTextBoxColumn.HeaderText = "Process";
             this.processDataGridViewTextBoxColumn.Name = "processDataGridViewTextBoxColumn";
             this.processDataGridViewTextBoxColumn.ReadOnly = true;
+            this.processDataGridViewTextBoxColumn.Width = 70;
             // 
             // workingDirectoryDataGridViewTextBoxColumn
             // 
@@ -128,6 +135,7 @@
             this.workingDirectoryDataGridViewTextBoxColumn.HeaderText = "WorkingDirectory";
             this.workingDirectoryDataGridViewTextBoxColumn.Name = "workingDirectoryDataGridViewTextBoxColumn";
             this.workingDirectoryDataGridViewTextBoxColumn.ReadOnly = true;
+            this.workingDirectoryDataGridViewTextBoxColumn.Width = 114;
             // 
             // argumentsDataGridViewTextBoxColumn
             // 
@@ -135,6 +143,7 @@
             this.argumentsDataGridViewTextBoxColumn.HeaderText = "Arguments";
             this.argumentsDataGridViewTextBoxColumn.Name = "argumentsDataGridViewTextBoxColumn";
             this.argumentsDataGridViewTextBoxColumn.ReadOnly = true;
+            this.argumentsDataGridViewTextBoxColumn.Width = 82;
             // 
             // cronScheduleDataGridViewTextBoxColumn
             // 
@@ -142,6 +151,7 @@
             this.cronScheduleDataGridViewTextBoxColumn.HeaderText = "CronSchedule";
             this.cronScheduleDataGridViewTextBoxColumn.Name = "cronScheduleDataGridViewTextBoxColumn";
             this.cronScheduleDataGridViewTextBoxColumn.ReadOnly = true;
+            this.cronScheduleDataGridViewTextBoxColumn.Width = 99;
             // 
             // timeOutDataGridViewTextBoxColumn
             // 
@@ -149,6 +159,7 @@
             this.timeOutDataGridViewTextBoxColumn.HeaderText = "TimeOut";
             this.timeOutDataGridViewTextBoxColumn.Name = "timeOutDataGridViewTextBoxColumn";
             this.timeOutDataGridViewTextBoxColumn.ReadOnly = true;
+            this.timeOutDataGridViewTextBoxColumn.Width = 72;
             // 
             // jobsBindingSource
             // 
@@ -392,7 +403,7 @@
             // 
             // folderBrowserDialog1
             // 
-            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.ProgramFilesX86;
+            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
             // Form1
             // 
