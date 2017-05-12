@@ -53,12 +53,7 @@ namespace QuartzManager
         {
             panel1.Enabled = true;
             textBoxJobID.Focus();
-        }
-
-        private void buttonCancel_Click(object sender, EventArgs e)
-        {
-            panel1.Enabled = false;
-            jobsBindingSource.ResetBindings(false);
+            changesMade = true;
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -82,10 +77,11 @@ namespace QuartzManager
         {
             if(dataGridView1.SelectedRows != null)
             {
-                if(MessageBox.Show("Are you sure you want to delete?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if(MessageBox.Show("Are you sure you want to delete and save all changes?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     jobsBindingSource.RemoveCurrent();
-                    changesMade = true;
+                    jobsTableAdapter.Update(quartzDataSet.Jobs);
+                    changesMade = false;
                 }
             }
         }
