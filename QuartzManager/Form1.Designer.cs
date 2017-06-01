@@ -46,7 +46,6 @@
             this.buttonFile = new System.Windows.Forms.Button();
             this.textBoxTimeOut = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.textBoxCronSchedule = new System.Windows.Forms.TextBox();
             this.textBoxArguments = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -66,6 +65,7 @@
             this.buttonDelete = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.jobsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.quartzDataSet)).BeginInit();
@@ -177,11 +177,11 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.linkLabel1);
             this.panel1.Controls.Add(this.buttonPath);
             this.panel1.Controls.Add(this.buttonFile);
             this.panel1.Controls.Add(this.textBoxTimeOut);
             this.panel1.Controls.Add(this.label9);
-            this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.textBoxCronSchedule);
             this.panel1.Controls.Add(this.textBoxArguments);
             this.panel1.Controls.Add(this.label6);
@@ -235,15 +235,6 @@
             this.label9.Size = new System.Drawing.Size(69, 13);
             this.label9.TabIndex = 16;
             this.label9.Text = "TimeOut (ms)";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(601, 17);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(74, 13);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "CronSchedule";
             // 
             // textBoxCronSchedule
             // 
@@ -405,6 +396,18 @@
             // 
             this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(601, 18);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(74, 13);
+            this.linkLabel1.TabIndex = 19;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "CronSchedule";
+            this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -450,7 +453,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxTimeOut;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBoxCronSchedule;
         private System.Windows.Forms.TextBox textBoxArguments;
         private System.Windows.Forms.Label label6;
@@ -468,6 +470,7 @@
         private System.Windows.Forms.Button buttonFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace QuartzManager
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            createLinkLabel();
             dataGridView1.ClearSelection();
             changesMade = false;
             // TODO: This line of code loads data into the 'quartzDataSet.Jobs' table. You can move, or remove it, as needed.
@@ -129,5 +131,18 @@ namespace QuartzManager
                 textBoxWorkingDirectory.Text = folderBrowserDialog1.SelectedPath;
             }
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(e.Link.LinkData.ToString());
+        }
+
+        private void createLinkLabel()
+        {
+            LinkLabel.Link link = new LinkLabel.Link();
+            link.LinkData = "http://www.cronmaker.com/";
+            linkLabel1.Links.Add(link);
+        }
+
     }
 }
