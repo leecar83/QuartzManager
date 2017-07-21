@@ -14,6 +14,8 @@ namespace QuartzManager
     public partial class Form1 : Form
     {
         bool changesMade = false;
+     
+        List<Int32> changedJobs = new List<int>();
 
         public Form1()
         {
@@ -25,7 +27,6 @@ namespace QuartzManager
             createLinkLabel();
             dataGridView1.ClearSelection();
             changesMade = false;
-            // TODO: This line of code loads data into the 'quartzDataSet.Jobs' table. You can move, or remove it, as needed.
             this.jobsTableAdapter.Fill(this.quartzDataSet.Jobs);
             jobsBindingSource.DataSource = this.quartzDataSet.Jobs;
         }
@@ -63,7 +64,16 @@ namespace QuartzManager
             try
             {
                 jobsBindingSource.EndEdit();
+                DataSet changedRecords1 = quartzDataSet.GetChanges();
                 jobsTableAdapter.Update(quartzDataSet.Jobs);
+                foreach (DataRow row in changedRecords1.Tables[0].Rows)
+                { 
+                    if(!changedJobs.Contains((int)row["JobID"]))
+                    {
+                        changedJobs.Add((int)row["JobID"]);
+                    }
+                    MessageBox.Show(row["JobID"].ToString());
+                }
                 
                 changesMade = false;        
                 panel1.Enabled = false;
@@ -83,6 +93,15 @@ namespace QuartzManager
                 {
                     jobsBindingSource.RemoveCurrent();
                     jobsTableAdapter.Update(quartzDataSet.Jobs);
+                    DataSet changedRecords1 = quartzDataSet.GetChanges();
+                    foreach (DataRow row in changedRecords1.Tables[0].Rows)
+                    {
+                        if (!changedJobs.Contains((int)row["JobID"]))
+                        {
+                            changedJobs.Add((int)row["JobID"]);
+                        }
+                        MessageBox.Show(row["JobID"].ToString());
+                    }
                     changesMade = false;
                 }
             }
@@ -94,8 +113,18 @@ namespace QuartzManager
             {
                 if(MessageBox.Show("Save Changes Before Exiting", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    jobsBindingSource.EndEdit();
+                    DataSet changedRecords = quartzDataSet.GetChanges();
+                    jobsBindingSource.EndEdit(); 
                     jobsTableAdapter.Update(quartzDataSet.Jobs);
+                    DataSet changedRecords1 = quartzDataSet.GetChanges();
+                    foreach (DataRow row in changedRecords1.Tables[0].Rows)
+                    {
+                        if (!changedJobs.Contains((int)row["JobID"]))
+                        {
+                            changedJobs.Add((int)row["JobID"]);
+                        }
+                        MessageBox.Show(row["JobID"].ToString());
+                    }
                 }
             }
         }
@@ -107,7 +136,7 @@ namespace QuartzManager
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            changesMade = true;
+           
         }
 
         private void buttonFile_Click(object sender, EventArgs e)
@@ -143,6 +172,5 @@ namespace QuartzManager
             link.LinkData = "http://www.cronmaker.com/";
             linkLabel1.Links.Add(link);
         }
-
     }
 }
