@@ -15,7 +15,7 @@ namespace QuartzManager
     {
         bool changesMade = false;
      
-        List<Int32> changedJobs = new List<int>();
+        Dictionary<Int32, Int32> changedJobs = new Dictionary<int, int>();
 
         public Form1()
         {
@@ -61,6 +61,7 @@ namespace QuartzManager
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            int test = 0;
             try
             {
                 jobsBindingSource.EndEdit();
@@ -68,11 +69,10 @@ namespace QuartzManager
                 jobsTableAdapter.Update(quartzDataSet.Jobs);
                 foreach (DataRow row in changedRecords1.Tables[0].Rows)
                 { 
-                    if(!changedJobs.Contains((int)row["JobID"]))
+                    if(!changedJobs.TryGetValue((int)row["JobID"], out test))
                     {
-                        changedJobs.Add((int)row["JobID"]);
+                        changedJobs.Add((int)row["JobID"], 1);
                     }
-                    MessageBox.Show(row["JobID"].ToString());
                 }
                 
                 changesMade = false;        
@@ -89,19 +89,30 @@ namespace QuartzManager
         {
             if(dataGridView1.SelectedRows != null)
             {
-                if(MessageBox.Show("Are you sure you want to delete and save all changes?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
+                if(MessageBox.Show("Are you sure you want to delete the job permanently and save all changes?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                { 
+                    int test = 0;
+                    if (!changedJobs.TryGetValue(quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID"), out test))
+                    {
+                        changedJobs.Add(quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID"), 1);
+                    }
+                    else
+                    {
+                        changedJobs[quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID")] = 1;
+                    }
+                    DataSet changedRecords1 = quartzDataSet.GetChanges();
+                    if(changedRecords1 != null)
+                    {
+                        foreach (DataRow row in changedRecords1.Tables[0].Rows)
+                        {
+                            if (!changedJobs.TryGetValue((int)row["JobID"], out test))
+                            {
+                                changedJobs.Add((int)row["JobID"], 0);
+                            }
+                        }
+                    }
                     jobsBindingSource.RemoveCurrent();
                     jobsTableAdapter.Update(quartzDataSet.Jobs);
-                    DataSet changedRecords1 = quartzDataSet.GetChanges();
-                    foreach (DataRow row in changedRecords1.Tables[0].Rows)
-                    {
-                        if (!changedJobs.Contains((int)row["JobID"]))
-                        {
-                            changedJobs.Add((int)row["JobID"]);
-                        }
-                        MessageBox.Show(row["JobID"].ToString());
-                    }
                     changesMade = false;
                 }
             }
@@ -113,18 +124,17 @@ namespace QuartzManager
             {
                 if(MessageBox.Show("Save Changes Before Exiting", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
+                    int test = 0;
                     DataSet changedRecords = quartzDataSet.GetChanges();
                     jobsBindingSource.EndEdit(); 
-                    jobsTableAdapter.Update(quartzDataSet.Jobs);
-                    DataSet changedRecords1 = quartzDataSet.GetChanges();
-                    foreach (DataRow row in changedRecords1.Tables[0].Rows)
+                    foreach (DataRow row in changedRecords.Tables[0].Rows)
                     {
-                        if (!changedJobs.Contains((int)row["JobID"]))
+                        if (!changedJobs.TryGetValue((int)row["JobID"], out test))
                         {
-                            changedJobs.Add((int)row["JobID"]);
+                            changedJobs.Add((int)row["JobID"], 0);
                         }
-                        MessageBox.Show(row["JobID"].ToString());
                     }
+                    jobsTableAdapter.Update(quartzDataSet.Jobs);
                 }
             }
         }
