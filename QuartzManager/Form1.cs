@@ -8,14 +8,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace QuartzManager
 {
     public partial class Form1 : Form
     {
         bool changesMade = false;
-     
-        Dictionary<Int32, Int32> changedJobs = new Dictionary<int, int>();
+
+        List<Int32> changedJobs = new List<Int32>();
+
+        ChannelFactory<IJobUpdater> httpFactory;
+        ChannelFactory<IJobUpdater> pipeFactory;
+        IJobUpdater httpProxy;
+        IJobUpdater pipeProxy;
 
         public Form1()
         {
@@ -29,6 +36,36 @@ namespace QuartzManager
             changesMade = false;
             this.jobsTableAdapter.Fill(this.quartzDataSet.Jobs);
             jobsBindingSource.DataSource = this.quartzDataSet.Jobs;
+            setupWCFConnection();
+        }
+
+        private void setupWCFConnection()
+        {
+            try
+            {
+                httpFactory =
+                    new ChannelFactory<IJobUpdater>(
+                    new BasicHttpBinding(),
+                    new EndpointAddress(
+                        "http://localhost:9000/Reverse"));
+
+                pipeFactory =
+                  new ChannelFactory<IJobUpdater>(
+                    new NetNamedPipeBinding(),
+                    new EndpointAddress(
+                      "net.pipe://localhost/PipeReverse"));
+
+                httpProxy =
+                  httpFactory.CreateChannel();
+
+                pipeProxy =
+                  pipeFactory.CreateChannel();
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error setting up service connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void buttonNew_Click(object sender, EventArgs e)
@@ -67,16 +104,19 @@ namespace QuartzManager
                 jobsBindingSource.EndEdit();
                 DataSet changedRecords1 = quartzDataSet.GetChanges();
                 jobsTableAdapter.Update(quartzDataSet.Jobs);
-                foreach (DataRow row in changedRecords1.Tables[0].Rows)
-                { 
-                    if(!changedJobs.TryGetValue((int)row["JobID"], out test))
+                if(changedRecords1 != null)
+                {
+                    foreach (DataRow row in changedRecords1.Tables[0].Rows)
                     {
-                        changedJobs.Add((int)row["JobID"], 1);
+                        if (!changedJobs.Contains((int)row["JobID"]))
+                        {
+                            changedJobs.Add((int)row["JobID"]);
+                        }
                     }
                 }
-                
                 changesMade = false;        
                 panel1.Enabled = false;
+                updateScheduler();
             }
             catch(Exception ex)
             {
@@ -92,9 +132,9 @@ namespace QuartzManager
                 if(MessageBox.Show("Are you sure you want to delete the job permanently and save all changes?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 { 
                     int test = 0;
-                    if (!changedJobs.TryGetValue(quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID"), out test))
+                    if (!changedJobs.Contains(quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID")))
                     {
-                        changedJobs.Add(quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID"), 1);
+                        changedJobs.Add(quartzDataSet.Jobs.Rows[jobsBindingSource.Position].Field<Int32>("JobID"));
                     }
                     else
                     {
@@ -105,15 +145,16 @@ namespace QuartzManager
                     {
                         foreach (DataRow row in changedRecords1.Tables[0].Rows)
                         {
-                            if (!changedJobs.TryGetValue((int)row["JobID"], out test))
+                            if (!changedJobs.Contains((int)row["JobID"]))
                             {
-                                changedJobs.Add((int)row["JobID"], 0);
+                                changedJobs.Add((int)row["JobID"]);
                             }
                         }
                     }
                     jobsBindingSource.RemoveCurrent();
                     jobsTableAdapter.Update(quartzDataSet.Jobs);
                     changesMade = false;
+                    updateScheduler();
                 }
             }
         }
@@ -125,16 +166,18 @@ namespace QuartzManager
                 if(MessageBox.Show("Save Changes Before Exiting", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     int test = 0;
-                    DataSet changedRecords = quartzDataSet.GetChanges();
+                    DataSet changedRecords = null;
+                    changedRecords = quartzDataSet.GetChanges();
                     jobsBindingSource.EndEdit(); 
                     foreach (DataRow row in changedRecords.Tables[0].Rows)
                     {
-                        if (!changedJobs.TryGetValue((int)row["JobID"], out test))
+                        if (!changedJobs.Contains((int)row["JobID"]))
                         {
-                            changedJobs.Add((int)row["JobID"], 0);
+                            changedJobs.Add((int)row["JobID"]);
                         }
                     }
                     jobsTableAdapter.Update(quartzDataSet.Jobs);
+                    updateScheduler();
                 }
             }
         }
@@ -142,11 +185,6 @@ namespace QuartzManager
         private void dataGridView1_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
         {
             dataGridView1.Rows[e.Row.Index -1].Cells[2].Value = "Default";
-        }
-
-        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-           
         }
 
         private void buttonFile_Click(object sender, EventArgs e)
@@ -182,5 +220,32 @@ namespace QuartzManager
             link.LinkData = "http://www.cronmaker.com/";
             linkLabel1.Links.Add(link);
         }
+
+        private void updateScheduler()
+        {
+            foreach(var change in changedJobs)
+            {
+                MessageBox.Show("Job Changed:" + change.ToString());
+            }
+            try
+            {
+                pipeProxy.UpdateJobs(changedJobs);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n" + ex.InnerException);
+            }
+            finally
+            {
+                changedJobs.Clear();
+            }
+        }
+    }
+
+    [ServiceContract]
+    public interface IJobUpdater
+    {
+        [OperationContract]
+        Boolean UpdateJobs(List<int> jobs);
     }
 }
